@@ -29,26 +29,42 @@ const Persons = ({persons, onDeleteClicked}) => (
   persons.map((p) => (
     <p key={p.id}> {p.name} {p.number} <button onClick={() => onDeleteClicked(p)}>Delete</button></p>
   )
-)
-)
+))
 
+const Notification = ({message, type}) => {
+  if (!message) {
+    return null;
+  }
+  return <div className={`notification ${type}`}>{message}</div>;
+
+}
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState({message: null, type: null});
 
   useEffect(() => {
     reloadPersons();
   }, []);
 
+  useEffect(() => {
+    if (!notification.message) {
+      return;
+    }
+    // when notification is set, empty it after a few seconds
+    setTimeout(() => {
+      setNotification({ message: null, type: null});
+    }, 3000);
+  }, [notification, setNotification])
+
   const reloadPersons = () => {
     getPersons().then((response) => {
       setPersons(response.data)
     }).catch(err => {
-      console.log('some error')
-      console.log(err)
+      setNotification({message: 'Error loading phonebook', type: 'error'})
     })
   }
 
@@ -64,19 +80,19 @@ const App = () => {
       }
       const existingPerson = existing[0];
       updatePerson(existingPerson.id, newValue).then(() => {
+        setNotification({message: `Updated number for ${newValue.name}`, type: 'success'})
         reloadPersons();
       }).catch(err => {
-        console.log('error updating')
-        console.log(err)
+        setNotification({message: `Error updating number for ${newValue.name}`, type: 'error'})
       })
       return;
     }
 
     addPerson(newValue).then(() => {
+      setNotification({message: `Added person ${newValue.name}`, type: 'success'})
       reloadPersons();
     }).catch(err => {
-      console.log('error creating')
-      console.log(err)
+      setNotification({message: `Error adding person ${newValue.name}`, type: 'error'})
     })
   }
 
@@ -85,10 +101,10 @@ const App = () => {
       return;
     }
     deletePerson(person.id).then(() => {
+      setNotification({message: `Deleted ${person.name}`, type: 'success'})
       reloadPersons();
     }).catch(err => {
-      console.log('error deleting')
-      console.log(err)
+      setNotification({message: `Error deleting ${person.name}`, type: 'error'})
     })
   }
 
@@ -97,6 +113,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification.message} type={notification.type} />
       <Filter onChange={setFilter} />
       <h2>add a new</h2>
       <PersonForm onNameChange={setNewName} onNumberChange={setNewNumber} onSubmit={onSubmit} />
