@@ -64,7 +64,12 @@ const App = () => {
     getPersons().then((response) => {
       setPersons(response.data)
     }).catch(err => {
-      setNotification({message: 'Error loading phonebook', type: 'error'})
+      let message = 'Error loading phonebook';
+      const serverMessage = err.response.data.error;
+      if (serverMessage) {
+        message += ': ' + serverMessage;
+      }
+      setNotification({message, type: 'error'})
     })
   }
 
@@ -83,7 +88,12 @@ const App = () => {
         setNotification({message: `Updated number for ${newValue.name}`, type: 'success'})
         reloadPersons();
       }).catch(err => {
-        setNotification({message: `Error updating number for ${newValue.name}`, type: 'error'})
+        let message = `Error updating number for ${newValue.name}`;
+        const serverMessage = err.response.data.error;
+        if (serverMessage) {
+          message += ': ' + serverMessage;
+        }
+        setNotification({message, type: 'error'})
       })
       return;
     }
@@ -92,7 +102,12 @@ const App = () => {
       setNotification({message: `Added person ${newValue.name}`, type: 'success'})
       reloadPersons();
     }).catch(err => {
-      setNotification({message: `Error adding person ${newValue.name}`, type: 'error'})
+      let message = `Error adding person ${newValue.name}`;
+      const serverMessage = err.response.data.error;
+      if (serverMessage) {
+        message += ': ' + serverMessage;
+      }
+      setNotification({message, type: 'error'})
     })
   }
 
@@ -104,7 +119,12 @@ const App = () => {
       setNotification({message: `Deleted ${person.name}`, type: 'success'})
       reloadPersons();
     }).catch(err => {
-      setNotification({message: `Error deleting ${person.name}`, type: 'error'})
+      let message = `Error deleting ${person.name}`;
+      const serverMessage = err.response.data.error;
+      if (serverMessage) {
+        message += ': ' + serverMessage;
+      }
+      setNotification({message, type: 'error'})
     })
   }
 
