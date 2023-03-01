@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
+const config = require('../utils/config');
 
-const password = process.env.MONGOPASSWORD;
-
-const mongoUrl = `mongodb+srv://mongoapp:${password}@cluster0.ahyualj.mongodb.net/bloglist?retryWrites=true&w=majority`;
+const mongoUrl = config.MONGODB_URI;
 
 const blogSchema = new mongoose.Schema({
   title: String,
