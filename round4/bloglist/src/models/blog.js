@@ -35,6 +35,8 @@ const create = (params) => {
     .save();
 };
 
+const deleteAll = () => Blog.deleteMany({});
+
 module.exports = {
-  init, close, getAll, create,
+  init, close, getAll, create, deleteAll,
 };

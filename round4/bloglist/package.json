@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon --ignore node_modules src/index.js",
-    "test": "jest",
+    "start": "NODE_ENV=production node src/index.js",
+    "dev": "NODE_ENV=development nodemon --ignore node_modules src/index.js",
+    "test": "NODE_ENV=test jest --runInBand",
     "lint": "npx eslint ."
   },
   "author": "Tarmo Asikainen",
@@ -23,7 +23,8 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
     "jest": "^29.4.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3"
   },
   "jest": {
     "testEnvironment": "node"
