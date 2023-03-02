@@ -35,4 +35,8 @@ describe('GET /api/blogs', () => {
     const response = await api.get('/api/blogs');
     expect(response.body.length).toBe(testBlogs.length);
   });
+  test('blog should have id', async () => {
+    const response = await api.get('/api/blogs');
+    expect(response.body[0].id).toBeDefined();
+  });
 });
