@@ -35,8 +35,10 @@ const create = (params) => {
     .save();
 };
 
+const deleteById = (id) => Blog.deleteOne({ _id: id });
+
 const deleteAll = () => Blog.deleteMany({});
 
 module.exports = {
-  init, close, getAll, create, deleteAll,
+  init, close, getAll, create, deleteAll, deleteById,
 };

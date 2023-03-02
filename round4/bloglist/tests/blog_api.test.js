@@ -94,3 +94,41 @@ describe('GET /api/blogs', () => {
     await api.post('/api/blogs').send(urlMissing).expect(400);
   });
 });
+
+describe('DELETE /api/blogs', () => {
+  const testBlog = {
+    title: 'shouldExist',
+    author: 'deleteTestAuthor',
+    url: 'test',
+    likes: 1,
+  };
+  const toBeDeleted = {
+    title: 'deleteTest',
+    author: 'deleteTestAuthor',
+    url: 'test',
+    likes: 1,
+  };
+  beforeEach(async () => {
+    await blog.init();
+    await blog.deleteAll();
+    await blog.create(testBlog);
+    await blog.create(toBeDeleted);
+    await blog.close();
+  });
+  test('should work', async () => {
+    await blog.init();
+    const before = await blog.getAll();
+    await blog.close();
+    expect(before.length).toBe(2);
+    const { id } = before.find((b) => b.title === toBeDeleted.title);
+    await api.delete(`/api/blogs/${id}`);
+    await blog.init();
+    const after = await blog.getAll();
+    await blog.close();
+    expect(after.length).toBe(1);
+    expect(after.find((b) => b.title === toBeDeleted.title)).toBe(undefined);
+  });
+  test('should return 400 on malformed id', async () => {
+    await api.delete('/api/blogs/test').expect(400);
+  });
+});
