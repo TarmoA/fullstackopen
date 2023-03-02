@@ -15,6 +15,9 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
   const newBlog = request.body;
+  if (newBlog.likes === undefined) {
+    newBlog.likes = 0;
+  }
   await blog.create(newBlog);
   blog.close();
   response.end();

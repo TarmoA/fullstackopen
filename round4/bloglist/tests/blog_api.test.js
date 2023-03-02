@@ -40,3 +40,41 @@ describe('GET /api/blogs', () => {
     expect(response.body[0].id).toBeDefined();
   });
 });
+
+describe('GET /api/blogs', () => {
+  const testBlog = {
+    title: 'postTest',
+    author: 'postTestAuthor',
+    url: 'test',
+    likes: 1,
+  };
+  const likesMissing = {
+    title: 'postTest',
+    author: 'postTestAuthor',
+    url: 'test',
+  };
+  beforeEach(async () => {
+    await blog.init();
+    await blog.deleteAll();
+    await blog.close();
+  });
+  test('blog should have id', async () => {
+    await api.post('/api/blogs').send(testBlog);
+    await blog.init();
+    const after = await blog.getAll();
+    await blog.close();
+    expect(after.length).toBe(1);
+    expect(after[0].title).toBe(testBlog.title);
+    expect(after[0].author).toBe(testBlog.author);
+    expect(after[0].url).toBe(testBlog.url);
+    expect(after[0].likes).toBe(testBlog.likes);
+  });
+  test('missing likes should default to 0', async () => {
+    await api.post('/api/blogs').send(likesMissing);
+    await blog.init();
+    const after = await blog.getAll();
+    await blog.close();
+    expect(after.length).toBe(1);
+    expect(after[0].likes).toBe(0);
+  });
+});
