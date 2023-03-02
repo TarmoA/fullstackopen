@@ -18,6 +18,18 @@ blogRouter.post('/', async (request, response) => {
   if (newBlog.likes === undefined) {
     newBlog.likes = 0;
   }
+  if (newBlog.title === undefined) {
+    response.status(400);
+    blog.close();
+    response.end();
+    return;
+  }
+  if (newBlog.url === undefined) {
+    response.status(400);
+    blog.close();
+    response.end();
+    return;
+  }
   await blog.create(newBlog);
   blog.close();
   response.end();

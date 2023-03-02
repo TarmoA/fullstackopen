@@ -42,23 +42,18 @@ describe('GET /api/blogs', () => {
 });
 
 describe('GET /api/blogs', () => {
-  const testBlog = {
-    title: 'postTest',
-    author: 'postTestAuthor',
-    url: 'test',
-    likes: 1,
-  };
-  const likesMissing = {
-    title: 'postTest',
-    author: 'postTestAuthor',
-    url: 'test',
-  };
   beforeEach(async () => {
     await blog.init();
     await blog.deleteAll();
     await blog.close();
   });
   test('blog should have id', async () => {
+    const testBlog = {
+      title: 'postTest',
+      author: 'postTestAuthor',
+      url: 'test',
+      likes: 1,
+    };
     await api.post('/api/blogs').send(testBlog);
     await blog.init();
     const after = await blog.getAll();
@@ -70,11 +65,32 @@ describe('GET /api/blogs', () => {
     expect(after[0].likes).toBe(testBlog.likes);
   });
   test('missing likes should default to 0', async () => {
+    const likesMissing = {
+      title: 'postTest',
+      author: 'postTestAuthor',
+      url: 'test',
+    };
     await api.post('/api/blogs').send(likesMissing);
     await blog.init();
     const after = await blog.getAll();
     await blog.close();
     expect(after.length).toBe(1);
     expect(after[0].likes).toBe(0);
+  });
+  test('missing title should give error 400', async () => {
+    const titleMissing = {
+      author: 'postTestAuthor',
+      url: 'test',
+      likes: 1,
+    };
+    await api.post('/api/blogs').send(titleMissing).expect(400);
+  });
+  test('missing url should give error 400', async () => {
+    const urlMissing = {
+      title: 'postTest',
+      author: 'postTestAuthor',
+      likes: 1,
+    };
+    await api.post('/api/blogs').send(urlMissing).expect(400);
   });
 });
