@@ -35,10 +35,17 @@ const create = (params) => {
     .save();
 };
 
+// allow editing only url and likes
+const update = (params) => Blog.updateOne(
+  { _id: params.id },
+  { url: params.url, likes: params.likes },
+  { runValidators: true },
+);
+
 const deleteById = (id) => Blog.deleteOne({ _id: id });
 
 const deleteAll = () => Blog.deleteMany({});
 
 module.exports = {
-  init, close, getAll, create, deleteAll, deleteById,
+  init, close, getAll, create, deleteAll, deleteById, update,
 };

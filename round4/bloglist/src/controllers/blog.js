@@ -37,6 +37,29 @@ blogRouter.post('/', async (request, response) => {
   response.end();
 });
 
+blogRouter.put('/:id', async (request, response) => {
+  const updatedBlog = request.body;
+  const { id } = request.params;
+  if (!id) {
+    response.status(400);
+    blog.close();
+    response.end();
+    return;
+  }
+  if (updatedBlog.likes === undefined) {
+    updatedBlog.likes = 0;
+  }
+  if (updatedBlog.url === undefined) {
+    response.status(400);
+    blog.close();
+    response.end();
+    return;
+  }
+  await blog.update({ id, ...updatedBlog });
+  blog.close();
+  response.end();
+});
+
 blogRouter.delete('/:id', async (request, response) => {
   const { id } = request.params;
   if (!id) {

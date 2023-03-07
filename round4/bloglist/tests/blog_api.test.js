@@ -132,3 +132,37 @@ describe('DELETE /api/blogs', () => {
     await api.delete('/api/blogs/test').expect(400);
   });
 });
+
+describe('PUT /api/blogs', () => {
+  const testBlog = {
+    title: 'putTest',
+    author: 'testAuthor',
+    url: 'test',
+    likes: 0,
+  };
+  beforeEach(async () => {
+    await blog.init();
+    await blog.deleteAll();
+    await blog.create(testBlog);
+    await blog.close();
+  });
+  test('should change likes and url', async () => {
+    await blog.init();
+    const before = await blog.getAll();
+    await blog.close();
+    expect(before.length).toBe(1);
+    const { id } = before[0];
+    const newLikes = 15;
+    const newUrl = 'TEST URL';
+    await api.put(`/api/blogs/${id}`).send({ ...testBlog, likes: newLikes, url: newUrl });
+
+    await blog.init();
+    const after = await blog.getAll();
+    await blog.close();
+    expect(after[0].likes).toBe(newLikes);
+    expect(after[0].url).toBe(newUrl);
+  });
+  test('should return 400 on malformed id', async () => {
+    await api.delete('/api/blogs/test').expect(400);
+  });
+});
