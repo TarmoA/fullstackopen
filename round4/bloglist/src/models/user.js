@@ -1,9 +1,6 @@
 const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
-const config = require('../utils/config');
-
-const mongoUrl = config.MONGODB_URI;
 
 const userSchema = new mongoose.Schema({
   username: String,
@@ -31,10 +28,6 @@ userSchema.set('toJSON', {
 
 const User = mongoose.model('User', userSchema);
 
-const init = () => mongoose.connect(mongoUrl);
-
-const close = () => mongoose.connection.close();
-
 const getAll = () => User
   .find({});
 
@@ -48,5 +41,5 @@ const create = async (params) => {
 const deleteAll = () => User.deleteMany({});
 
 module.exports = {
-  init, close, create, deleteAll, getAll,
+  create, deleteAll, getAll,
 };

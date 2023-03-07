@@ -1,8 +1,8 @@
-const blog = require('../models/blog');
+const db = require('./db');
 
 const errorHandler = async (error, req, res, next) => {
   try {
-    blog.close();
+    db.close();
   } catch {
     // don't care if closing fails here
   }

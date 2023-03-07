@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const config = require('../utils/config');
-
-const mongoUrl = config.MONGODB_URI;
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -22,10 +19,6 @@ blogSchema.set('toJSON', {
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
-
-const init = () => mongoose.connect(mongoUrl);
-
-const close = () => mongoose.connection.close();
 
 const getAll = () => Blog
   .find({});
@@ -48,5 +41,5 @@ const deleteById = (id) => Blog.deleteOne({ _id: id });
 const deleteAll = () => Blog.deleteMany({});
 
 module.exports = {
-  init, close, getAll, create, deleteAll, deleteById, update,
+  getAll, create, deleteAll, deleteById, update,
 };

@@ -1,6 +1,7 @@
 const supertest = require('supertest');
 const app = require('../src/app');
 const blog = require('../src/models/blog');
+const db = require('../src/utils/db');
 
 const api = supertest(app);
 
@@ -19,10 +20,13 @@ describe('GET /api/blogs', () => {
   }];
 
   beforeEach(async () => {
-    await blog.init();
+    await db.connect();
     await blog.deleteAll();
     await Promise.all(testBlogs.map((testBlog) => blog.create(testBlog)));
-    await blog.close();
+  });
+
+  afterEach(async () => {
+    await db.close();
   });
 
   test('blogs are returned as json', async () => {
@@ -43,10 +47,14 @@ describe('GET /api/blogs', () => {
 
 describe('GET /api/blogs', () => {
   beforeEach(async () => {
-    await blog.init();
+    await db.connect();
     await blog.deleteAll();
-    await blog.close();
   });
+
+  afterEach(async () => {
+    await db.close();
+  });
+
   test('blog should have id', async () => {
     const testBlog = {
       title: 'postTest',
@@ -55,9 +63,7 @@ describe('GET /api/blogs', () => {
       likes: 1,
     };
     await api.post('/api/blogs').send(testBlog);
-    await blog.init();
     const after = await blog.getAll();
-    await blog.close();
     expect(after.length).toBe(1);
     expect(after[0].title).toBe(testBlog.title);
     expect(after[0].author).toBe(testBlog.author);
@@ -71,9 +77,7 @@ describe('GET /api/blogs', () => {
       url: 'test',
     };
     await api.post('/api/blogs').send(likesMissing);
-    await blog.init();
     const after = await blog.getAll();
-    await blog.close();
     expect(after.length).toBe(1);
     expect(after[0].likes).toBe(0);
   });
@@ -109,22 +113,22 @@ describe('DELETE /api/blogs', () => {
     likes: 1,
   };
   beforeEach(async () => {
-    await blog.init();
+    await db.connect();
     await blog.deleteAll();
     await blog.create(testBlog);
     await blog.create(toBeDeleted);
-    await blog.close();
   });
+
+  afterEach(async () => {
+    await db.close();
+  });
+
   test('should work', async () => {
-    await blog.init();
     const before = await blog.getAll();
-    await blog.close();
     expect(before.length).toBe(2);
     const { id } = before.find((b) => b.title === toBeDeleted.title);
     await api.delete(`/api/blogs/${id}`);
-    await blog.init();
     const after = await blog.getAll();
-    await blog.close();
     expect(after.length).toBe(1);
     expect(after.find((b) => b.title === toBeDeleted.title)).toBe(undefined);
   });
@@ -141,24 +145,24 @@ describe('PUT /api/blogs', () => {
     likes: 0,
   };
   beforeEach(async () => {
-    await blog.init();
+    await db.connect();
     await blog.deleteAll();
     await blog.create(testBlog);
-    await blog.close();
   });
+
+  afterEach(async () => {
+    await db.close();
+  });
+
   test('should change likes and url', async () => {
-    await blog.init();
     const before = await blog.getAll();
-    await blog.close();
     expect(before.length).toBe(1);
     const { id } = before[0];
     const newLikes = 15;
     const newUrl = 'TEST URL';
     await api.put(`/api/blogs/${id}`).send({ ...testBlog, likes: newLikes, url: newUrl });
 
-    await blog.init();
     const after = await blog.getAll();
-    await blog.close();
     expect(after[0].likes).toBe(newLikes);
     expect(after[0].url).toBe(newUrl);
   });
