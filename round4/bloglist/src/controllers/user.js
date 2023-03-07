@@ -4,7 +4,12 @@ const user = require('../models/user');
 
 userRouter.get('/', async (request, response) => {
   const users = await user.getAll();
-  return response.json(users);
+  const notesRemoved = users.map((u) => ({
+    name: u.name,
+    username: u.username,
+    id: u.id,
+  }));
+  return response.json(notesRemoved);
 });
 
 userRouter.post('/', async (request, response) => {
