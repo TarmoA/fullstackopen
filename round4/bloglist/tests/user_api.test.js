@@ -73,4 +73,68 @@ describe('POST /api/users', () => {
     expect(after.find((u) => u.username === testUser.username
       && u.name === testUser.name)).toBeTruthy();
   });
+  test('should return error on empty username ', async () => {
+    const testUser = {
+      username: '',
+      name: 'Test User',
+      password: 'password123',
+    };
+    const response = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toMatch(/Missing username/);
+  });
+  test('should return error on empty password', async () => {
+    const testUser = {
+      username: 'test',
+      name: 'Test User',
+      password: '',
+    };
+    const response = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toMatch(/Missing password/);
+  });
+  test('should return error on short password', async () => {
+    const testUser = {
+      username: 'test',
+      name: 'Test User',
+      password: '12',
+    };
+    const response = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toMatch(/Password must be at least 3 characters long/);
+  });
+  test('should return error on short username', async () => {
+    const testUser = {
+      username: '12',
+      name: 'Test User',
+      password: 'password123',
+    };
+    const response = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toMatch(/Username must be at least 3 characters long/);
+  });
+  test('should return error on duplicate username', async () => {
+    const testUser = {
+      username: 'duplicateTest',
+      name: 'Test User',
+      password: 'password123',
+    };
+    const first = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(first.statusCode).toBe(201);
+    const second = await api
+      .post('/api/users')
+      .send(testUser);
+    expect(second.statusCode).toBe(400);
+    expect(second.body.error).toMatch(/Username must be unique/);
+  });
 });
