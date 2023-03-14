@@ -3,25 +3,13 @@ require('express-async-errors');
 const blog = require('../models/blog');
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
-
 blogRouter.get('/', async (request, response) => {
   const blogs = await blog.getAll();
   return response.json(blogs);
 });
 
 blogRouter.post('/', async (request, response) => {
-  const jwtToken = getTokenFrom(request);
-  if (!jwtToken) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const decodedToken = jwt.verify(jwtToken, process.env.LOGIN_SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.LOGIN_SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
