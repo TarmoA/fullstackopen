@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const user = require('../models/user');
+const config = require('../utils/config')
 
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body;
@@ -28,7 +29,7 @@ loginRouter.post('/', async (request, response) => {
     id: foundUser._id,
   };
 
-  const token = jwt.sign(userForToken, process.env.LOGIN_SECRET);
+  const token = jwt.sign(userForToken, config.LOGIN_SECRET);
 
   response
     .status(200)

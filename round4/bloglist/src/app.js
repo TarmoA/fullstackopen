@@ -7,6 +7,7 @@ const loginRouter = require('./controllers/login');
 const db = require('./utils/db');
 const errorHandler = require('./utils/errorHandler');
 const tokenExtractor = require('./utils/tokenExtractor');
+const userExtractor = require('./utils/userExtractor');
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use('/api/blogs', blogRouter);
+app.use('/api/blogs', userExtractor, blogRouter);
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);
 
