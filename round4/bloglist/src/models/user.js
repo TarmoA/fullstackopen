@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
@@ -33,15 +32,19 @@ const getAll = () => User
     title: true, author: true, url: true, likes: true,
   });
 
+const getByUsername = (username) => User.findOne({ username });
+
+const getById = (id) => User.findOne({ _id: id });
+
 const create = async (params) => {
   const saltRound = 10;
   const hashed = await bcrypt.hash(params.password, saltRound);
-  const user = new User({ ...params, password: hashed });
+  const user = new User({ ...params, passwordHash: hashed });
   return user.save();
 };
 
 const deleteAll = () => User.deleteMany({});
 
 module.exports = {
-  User, create, deleteAll, getAll,
+  User, create, deleteAll, getAll, getByUsername, getById
 };

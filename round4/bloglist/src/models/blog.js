@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 const user = require('./user');
 
@@ -25,10 +24,9 @@ const Blog = mongoose.model('Blog', blogSchema);
 const getAll = () => Blog
   .find({}).populate('user', { username: true, name: true });
 
-const create = async (params) => {
-  const users = await user.getAll();
-  const owner = users[0];
-  const blog = new Blog({ ...params, user: owner._id });
+const create = async (blogParams, userId) => {
+  const owner = await user.getById(userId);
+  const blog = new Blog({ ...blogParams, user: owner._id });
   const savedBlog = await blog
     .save();
   owner.blogs = owner.blogs.concat(savedBlog._id);

@@ -3,6 +3,7 @@ const cors = require('cors');
 const requestLogger = require('./utils/requestLogger');
 const blogRouter = require('./controllers/blog');
 const userRouter = require('./controllers/user');
+const loginRouter = require('./controllers/login');
 const db = require('./utils/db');
 const errorHandler = require('./utils/errorHandler');
 
@@ -18,6 +19,7 @@ app.use(async (req, res, next) => {
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
+app.use('/api/login', loginRouter);
 
 app.use(async (req, res, next) => {
   await db.close();

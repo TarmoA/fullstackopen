@@ -1,6 +1,15 @@
 const blogRouter = require('express').Router();
 require('express-async-errors');
 const blog = require('../models/blog');
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await blog.getAll();
@@ -8,6 +17,14 @@ blogRouter.get('/', async (request, response) => {
 });
 
 blogRouter.post('/', async (request, response) => {
+  const jwtToken = getTokenFrom(request);
+  if (!jwtToken) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const decodedToken = jwt.verify(jwtToken, process.env.LOGIN_SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
   const newBlog = request.body;
   if (newBlog.likes === undefined) {
     newBlog.likes = 0;
@@ -22,7 +39,7 @@ blogRouter.post('/', async (request, response) => {
     response.end();
     return;
   }
-  await blog.create(newBlog);
+  await blog.create(newBlog, decodedToken.id);
   response.end();
 });
 
