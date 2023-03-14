@@ -7,11 +7,13 @@ module.exports = {
   },
   extends: 'airbnb-base',
   overrides: [
-    {'no-underscore-dangle': 0}
   ],
   parserOptions: {
     ecmaVersion: 'latest',
   },
   rules: {
+    'no-sunderscore-dangle': {
+      allow: ['_id'],
+    },
   },
 };

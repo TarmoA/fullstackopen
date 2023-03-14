@@ -41,10 +41,12 @@ const update = (params) => Blog.updateOne(
   { runValidators: true },
 );
 
+const getById = (id) => Blog.findOne({ _id: id });
+
 const deleteById = (id) => Blog.deleteOne({ _id: id });
 
 const deleteAll = () => Blog.deleteMany({});
 
 module.exports = {
-  Blog, getAll, create, deleteAll, deleteById, update,
+  Blog, getAll, create, deleteAll, deleteById, update, getById,
 };

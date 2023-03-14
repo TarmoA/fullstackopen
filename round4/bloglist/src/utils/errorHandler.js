@@ -12,8 +12,9 @@ const errorHandler = async (error, req, res, next) => {
     res.status(400).send({ error: 'malformatted id' });
     res.end();
     return;
-  } else if (error.name === 'JsonWebTokenError') {
-    res.status(400).json({ error: 'token error' })
+  }
+  if (error.name === 'JsonWebTokenError') {
+    res.status(400).json({ error: 'token error' });
     return;
   }
   res.status(500).send({ error: 'Server error' });
