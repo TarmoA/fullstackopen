@@ -1,5 +1,5 @@
+/* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
-
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -16,20 +16,22 @@ const userSchema = new mongoose.Schema({
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    /* eslint-disable no-param-reassign, no-underscore-dangle */
+    /* eslint-disable no-param-reassign */
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
     // the passwordHash should not be revealed
     delete returnedObject.passwordHash;
-    /* eslint-enable no-param-reassign, no-underscore-dangle */
+    /* eslint-enable no-param-reassign */
   },
 });
 
 const User = mongoose.model('User', userSchema);
 
 const getAll = () => User
-  .find({});
+  .find({}).populate('blogs', {
+    title: true, author: true, url: true, likes: true,
+  });
 
 const create = async (params) => {
   const saltRound = 10;
@@ -41,5 +43,5 @@ const create = async (params) => {
 const deleteAll = () => User.deleteMany({});
 
 module.exports = {
-  create, deleteAll, getAll,
+  User, create, deleteAll, getAll,
 };

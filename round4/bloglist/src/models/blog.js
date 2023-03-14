@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
+const user = require('./user');
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -10,23 +12,28 @@ const blogSchema = new mongoose.Schema({
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    /* eslint-disable no-param-reassign, no-underscore-dangle */
+    /* eslint-disable no-param-reassign, */
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-    /* eslint-enable no-param-reassign, no-underscore-dangle */
+    /* eslint-enable no-param-reassign */
   },
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
 
 const getAll = () => Blog
-  .find({});
+  .find({}).populate('user', { username: true, name: true });
 
-const create = (params) => {
-  const blog = new Blog(params);
-  return blog
+const create = async (params) => {
+  const users = await user.getAll();
+  const owner = users[0];
+  const blog = new Blog({ ...params, user: owner._id });
+  const savedBlog = await blog
     .save();
+  owner.blogs = owner.blogs.concat(savedBlog._id);
+  await owner.save();
+  return savedBlog;
 };
 
 // allow editing only url and likes
@@ -41,5 +48,5 @@ const deleteById = (id) => Blog.deleteOne({ _id: id });
 const deleteAll = () => Blog.deleteMany({});
 
 module.exports = {
-  getAll, create, deleteAll, deleteById, update,
+  Blog, getAll, create, deleteAll, deleteById, update,
 };
