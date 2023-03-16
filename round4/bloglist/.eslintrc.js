@@ -12,8 +12,6 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    'no-sunderscore-dangle': {
-      allow: ['_id'],
-    },
+    'no-underscore-dangle': 0,
   },
 };

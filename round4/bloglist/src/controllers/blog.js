@@ -22,8 +22,8 @@ blogRouter.post('/', async (request, response) => {
     response.end();
     return;
   }
-  if (!request.user) {
-    response.status(400);
+  if (!request.user || !request.user._id) {
+    response.status(401);
     response.end();
     return;
   }
@@ -52,14 +52,14 @@ blogRouter.put('/:id', async (request, response) => {
 });
 
 blogRouter.delete('/:id', async (request, response) => {
-  if (!request.user) {
-    response.status(400).send('user error');
+  if (!request.user || !request.user._id) {
+    response.status(401).end();
     return;
   }
-  const userId = request.user._id
+  const userId = request.user._id;
   const { id } = request.params;
   if (!id) {
-    response.status(400);
+    response.status(400).end();
     return;
   }
   const existing = await blog.getById(id);
@@ -68,7 +68,7 @@ blogRouter.delete('/:id', async (request, response) => {
     return;
   }
   if (existing.user.toString() !== userId.toString()) {
-    response.status(401);
+    response.status(401).end();
     return;
   }
   await blog.deleteById(id);

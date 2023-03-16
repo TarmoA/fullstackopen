@@ -26,6 +26,9 @@ const getAll = () => Blog
 
 const create = async (blogParams, userId) => {
   const owner = await user.getById(userId);
+  if (!owner) {
+    throw new Error('User not found');
+  }
   const blog = new Blog({ ...blogParams, user: owner._id });
   const savedBlog = await blog
     .save();

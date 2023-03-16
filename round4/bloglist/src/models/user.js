@@ -46,5 +46,5 @@ const create = async (params) => {
 const deleteAll = () => User.deleteMany({});
 
 module.exports = {
-  User, create, deleteAll, getAll, getByUsername, getById
+  User, create, deleteAll, getAll, getByUsername, getById,
 };

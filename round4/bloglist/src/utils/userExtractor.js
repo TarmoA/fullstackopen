@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('./config');
-const user = require('../models/user')
+const user = require('../models/user');
 
 const userExtractor = async (req, res, next) => {
   if (req.token) {
@@ -11,6 +11,6 @@ const userExtractor = async (req, res, next) => {
     }
   }
   next();
-}
+};
 
 module.exports = userExtractor;

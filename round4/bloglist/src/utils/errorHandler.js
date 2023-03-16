@@ -2,7 +2,6 @@ const db = require('./db');
 const logger = require('./logger');
 
 const errorHandler = async (error, req, res, next) => {
-  logger.error(error);
   try {
     db.close();
   } catch {
@@ -18,6 +17,7 @@ const errorHandler = async (error, req, res, next) => {
     return;
   }
   res.status(500).send({ error: 'Server error' });
+  logger.error(error);
   next();
 };
 
